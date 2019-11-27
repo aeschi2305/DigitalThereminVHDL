@@ -12,7 +12,7 @@ use ieee.numeric_std.all;
 library std;
 use std.textio.all;
 
-entity cordic_verify is
+entity cordic_unrolled_verify is
 	generic (
 	 N : natural := 16;	--Number of Bits of the sine wave (precision)
 	 nn : integer := 100	--Number of calculated sine values from -pi/2 to pi/2
@@ -20,13 +20,12 @@ entity cordic_verify is
   	port(
      reset_n : out std_ulogic;
    	 clk : out std_ulogic;
-     done : in std_ulogic;
      phi : out signed(N-1 downto 0);
      sine : in signed(N downto 0)
   	);
-end entity cordic_verify;
+end entity cordic_unrolled_verify;
 
-architecture stimuli_and_monitor of cordic_verify is
+architecture stimuli_and_monitor of cordic_unrolled_verify is
   constant c_cycle_time : time := 20 ns;
   constant slope_ang    : integer := 2*(2**(N)-1)/nn;
   signal enable         : boolean := true;
@@ -46,7 +45,7 @@ begin
   	
     while count <= nn/4 loop
       phi_n <= to_signed(count * slope_ang, phi_n'length);
-      wait until done = '1';
+      wait for c_cycle_time;
       count <= count + 1;
     end loop;
     wait for 3*c_cycle_time;

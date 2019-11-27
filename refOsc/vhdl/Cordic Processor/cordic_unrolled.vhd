@@ -1,30 +1,29 @@
 -----------------------------------------------------
 -- Project : Digital Theremin
 -----------------------------------------------------
--- File    : cordic.vhd
+-- File    : cordic_unrolled.vhd
 -- Author  : dennis.aeschbacher@students.fhnw.ch
 -----------------------------------------------------
--- Description : Calculates the sine value of a given angle phi in N sequential iterations
+-- Description : Calculates the sine value of a given angle phi in N parallel iterations
 -----------------------------------------------------
 
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity Cordic is
+entity cordic_unrolled is
   generic (
     N : natural := 16 --Number of Bits of the sine wave (precision)
   );
   port(
     reset_n : in std_ulogic;
     clk : in std_ulogic;
-    done : out std_ulogic;
     phi : in signed(N-1 downto 0);
     sine : out signed(N downto 0)
   );
-end entity Cordic;
+end entity cordic_unrolled;
 
-architecture behavioral of Cordic is
+architecture behavioral of cordic_unrolled is
 type atan_type is array (0 to 14) of signed (N-1 downto 0);
 constant atan : atan_type :=     ("0100000000000000",  -- Lookuptable for the arcustangent of 2^-k
                                   "0010010111001000",
@@ -51,8 +50,11 @@ type cordic_record is record
     z : signed (N-1 downto 0);
 end record cordic_record;
 
+type cordic_record_array is array (N-1 downto 0) of cordic_record;
+
 signal cordic_rec_reg : cordic_record;
-signal cordic_rec_cmb : cordic_record;
+signal cordic_rec_init: cordic_record;
+signal cordic_rec_cmb : cordic_record_array;
 
 function calculateIteration (        --calculation of one Iteration
      cordic_rec : cordic_record;   -- iteration index
@@ -84,32 +86,24 @@ begin
             cordic_rec_reg.x <= (others => '0');   
             cordic_rec_reg.y <= (others => '0');
             cordic_rec_reg.z <= (others => '0');
-            done <= '1';
-            cnt <= 0;
         elsif rising_edge(clk) then
-            if done = '1' then
-              cordic_rec_reg.x <= (others => '1');           --only needed if pipelined
-              cordic_rec_reg.x(N downto N-1) <= "00";
-              cordic_rec_reg.y <= (others => '0');
-              cordic_rec_reg.z <= phi; 
-              done <= '0';
-            else
-              cordic_rec_reg.x <= cordic_rec_cmb.x;            --only needed if pipelined
-              cordic_rec_reg.y <= cordic_rec_cmb.y;
-              cordic_rec_reg.z <= cordic_rec_cmb.z;            --only needed if pipelined
-              cnt <= cnt +1;
-              if cnt = N-2 then
-                done <= '1';
-                cnt <= 0;
-              end if;
-            end if;
+              cordic_rec_init.x <= (others => '1');           --only needed if pipelined
+              cordic_rec_init.x(N downto N-1) <= "00";
+              cordic_rec_init.y <= (others => '0');
+              cordic_rec_init.z <= phi; 
+              cordic_rec_reg.x <= cordic_rec_cmb(N-1).x;            --only needed if pipelined
+              cordic_rec_reg.y <= cordic_rec_cmb(N-1).y;
+              cordic_rec_reg.z <= cordic_rec_cmb(N-1).z;            --only needed if pipelined              
         end if;
     end process p_reg;
 
     p_cmb : process(all)
 
     begin 
-      cordic_rec_cmb <= calculateIteration(cordic_rec_reg,cnt);
+    	cordic_rec_cmb(0) <= cordic_rec_init;
+    	l_cordic : for i in 0 to N-2 loop
+      		cordic_rec_cmb(i+1) <= calculateIteration(cordic_rec_cmb(i),i);
+      	end loop l_cordic;
     end process p_cmb;
 
     sine <= cordic_rec_reg.y;
