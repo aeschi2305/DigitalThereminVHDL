@@ -28,8 +28,8 @@ end entity cordic_Control;
 
 
 architecture behavioral of cordic_Control is
-constant sig_Freq : signed(20 downto 0) := to_signed(500000,21);      -- interpreted as 500000/2**20
-constant clk_Period : signed(N-1 downto 0) := "0000001011001100";		-- clk_Period multiplied with 2**20
+constant sig_Freq : signed(20 downto 0) := to_signed(550000,21);      -- interpreted as 500000/2**20
+constant clk_Period : signed(31 downto 0) := "00000010110010111101001111110000";		-- clk_Period multiplied with 2**20
 constant invert : signed(N downto 0) := '0'&(N-1 downto 0 => '1');			-- used to invert sawtooth angle to triangle angle
 constant sign_inv : signed(N-1 downto 0) := "00000"&(N-6 downto 0 => '1');	-- inverts the sign because of shift right
 signal phi_noninv_cmb : signed (N downto 0);    --Combinatorial calculated sawtooth angle
@@ -73,15 +73,14 @@ begin
 
 
     p_cmb_stepcalc : process(all)
-        variable phi_step_tmp : signed(2*N-1 downto 0);
-        variable sig_Freq_shifted : signed(N-1 downto 0);
-    begin
-        sig_Freq_shifted := sig_Freq(20 downto 21-N);
-        phi_step_tmp := shift_left((sig_Freq_shifted)*clk_Period,2);  --Problematic for N > 20
-        phi_step <= phi_step_tmp(2*N-1 downto N-1);
+        variable phi_step_tmp : signed(63 downto 0);
+        variable sig_Freq_tmp : signed(31 downto 0);
+    begin 
+        sig_Freq_tmp := (sig_Freq & "00000000000");
+        phi_step_tmp := sig_Freq_tmp*clk_Period;  --Problematic for N > 20
+        phi_step <= phi_step_tmp(63 downto 63-N);
   
     end process p_cmb_stepcalc;
 
     phi <= phi_reg;
-            
-end architecture behavioral;
+    end architecture behavioral; 
