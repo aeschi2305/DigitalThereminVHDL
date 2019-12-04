@@ -29,14 +29,14 @@ end entity cordic_Control;
 
 architecture behavioral of cordic_Control is
 constant sig_Freq : signed(20 downto 0) := to_signed(550000,21);      -- interpreted as 500000/2**20
-constant clk_Period : signed(31 downto 0) := "00000010110010111101001111110000";		-- clk_Period multiplied with 2**20
-constant invert : signed(N downto 0) := '0'&(N-1 downto 0 => '1');			-- used to invert sawtooth angle to triangle angle
-constant sign_inv : signed(N-1 downto 0) := "00000"&(N-6 downto 0 => '1');	-- inverts the sign because of shift right
-signal phi_noninv_cmb : signed (N downto 0);    --Combinatorial calculated sawtooth angle
-signal phi_noninv_reg : signed (N downto 0);    --Sequential calculated sawtooth angle
+constant clk_Period : signed(20 downto 0) := "000000101100101111010";		-- clk_Period multiplied with 2**20
+constant invert : signed(20 downto 0) := '0'&(19 downto 0 => '1');			-- used to invert sawtooth angle to triangle angle
+
+signal phi_noninv_cmb : signed (20 downto 0);    --Combinatorial calculated sawtooth angle
+signal phi_noninv_reg : signed (20 downto 0);    --Sequential calculated sawtooth angle
 signal phi_cmb : signed (N-1 downto 0); 		--Combinatorial calculated triangle angle
 signal phi_reg : signed (N-1 downto 0);			--Sequential calculated triangle angle
-signal phi_step :  signed (N downto 0);  --Step for the calculation of the current sawtooth angle.
+signal phi_step :  signed (20 downto 0);  --Step for the calculation of the current sawtooth angle.
 
 
 
@@ -55,17 +55,18 @@ begin
     end process p_reg;
 
     p_cmb_phicalc : process(all)
-    variable phi_tmp1 : signed(N downto 0);
-    variable phi_tmp2 : signed(N downto 0);
+    variable phi_tmp1 : signed(20 downto 0) := (others => '0');
+    variable phi_tmp2 : signed(20 downto 0) := (others => '0');
     begin
     	phi_tmp1 := phi_noninv_reg + phi_step;
-    	phi_noninv_cmb <= phi_tmp1;
-        if phi_tmp1(N downto N-1) = "01" or phi_tmp1(N downto N-1) = "10" then
+    	
+        if phi_tmp1(20 downto 19) = "01" or phi_tmp1(20 downto 19) = "10" then
             phi_tmp2 := phi_tmp1 xor invert;
-            phi_cmb <= phi_tmp2(N-1 downto 0);
+            phi_cmb <= phi_tmp2(19 downto 19-N+1);
         else
-            phi_cmb <= phi_tmp1(N-1 downto 0);
+            phi_cmb <= phi_tmp1(19 downto 19-N+1);
         end if;
+        phi_noninv_cmb <= phi_tmp1;
 
  
     end process p_cmb_phicalc;
@@ -73,12 +74,12 @@ begin
 
 
     p_cmb_stepcalc : process(all)
-        variable phi_step_tmp : signed(63 downto 0);
-        variable sig_Freq_tmp : signed(31 downto 0);
+        variable phi_step_tmp : signed(41 downto 0);
+        variable phi_step_tmp2 : signed(20 downto 0);
     begin 
-        sig_Freq_tmp := (sig_Freq & "00000000000");
-        phi_step_tmp := sig_Freq_tmp*clk_Period;  --Problematic for N > 20
-        phi_step <= phi_step_tmp(63 downto 63-N);
+        phi_step_tmp := sig_Freq*clk_Period;
+        phi_step_tmp2 :=  phi_step_tmp(41 downto 21);
+        phi_step <= shift_left(phi_step_tmp2,2);
   
     end process p_cmb_stepcalc;
 
