@@ -70,12 +70,14 @@ begin
  
     end process p_cmb_phicalc;
 
+
+
     p_cmb_stepcalc : process(all)
         variable phi_step_tmp : signed(2*N-1 downto 0);
         variable sig_Freq_shifted : signed(N-1 downto 0);
     begin
         sig_Freq_shifted := sig_Freq(20 downto 21-N);
-        phi_step_tmp := (sig_Freq_shifted)*clk_Period;  --Problematic for N > 20
+        phi_step_tmp := shift_left((sig_Freq_shifted)*clk_Period,2);  --Problematic for N > 20
         phi_step <= phi_step_tmp(2*N-1 downto N-1);
   
     end process p_cmb_stepcalc;
