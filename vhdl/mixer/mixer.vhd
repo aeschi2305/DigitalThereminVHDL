@@ -43,6 +43,8 @@ begin
   ------------------------------------------------------------------------------
   p_cmb : process (all)
   begin
+    -- default assignment
+    mixer_cmb <= mixer_reg;
     if square_freq = '1' then
     	mixer_cmb <= sine;
     elsif square_freq = '0' then

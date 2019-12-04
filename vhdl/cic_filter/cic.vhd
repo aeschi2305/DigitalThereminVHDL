@@ -30,8 +30,8 @@ architecture rtl of cic is
   signal comb_reg             : signed(N+9 downto 0);
   signal comb_cmb             : signed(N+9 downto 0);
   signal en_comb              : boolean := false;
-  signal count_reg            : integer range 0 to 999;
-  signal count_cmb            : integer range 0 to 1000;
+  signal count_reg            : integer range 0 to 1000;
+  signal count_cmb            : integer range 0 to 1001;
 
 begin
   ------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ begin
   -----------------------------------------------------------------------------
   p_integrator_cmb : process (all)
   begin
-    integrator_cmb <= integrator_reg + mixer_out;
+    integrator_cmb <= integrator_reg + resize(mixer_out,integrator_reg'length);
   end process p_integrator_cmb;
 
   ------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ begin
       count_reg <= 0;
       en_comb <= false;
     elsif rising_edge(clk) then
-        if count_reg < rc_factor-1 then
+        if count_reg < rc_factor then --1- rausgenommen
           count_reg <= count_cmb; --counter
           en_comb <= false;
         else

@@ -95,7 +95,8 @@ begin
     p_reg : process(reset_n,clk)
     begin
         if reset_n = '0' then
-            cordic_rec_reg <= (others => icordic_reg);   
+            cordic_rec_reg <= (others => icordic_reg); 
+            cordic_reg  <= (others => '0');
         elsif rising_edge(clk) then
               cordic_rec_reg(0).x <= "00"&(N-2 downto 0 => '1');           
               cordic_rec_reg(0).y <= (others => '0');
