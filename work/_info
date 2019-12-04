@@ -1,0 +1,51 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/andre/OneDrive/Dokumente/GitHub/DigitalThereminVHDL/cic_filter
+Ecic
+Z1 w1575033784
+Z2 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+R0
+Z5 8C:/Users/andre/OneDrive/Dokumente/GitHub/DigitalThereminVHDL/cic_filter/vhdl/cic.vhd
+Z6 FC:/Users/andre/OneDrive/Dokumente/GitHub/DigitalThereminVHDL/cic_filter/vhdl/cic.vhd
+l0
+L11
+V_?Ka<2hNZI[zf1gZJb29H3
+!s100 8Z;V?A^ePNLT<M4:9lV>?2
+Z7 OL;C;10.7;67
+33
+Z8 !s110 1575444587
+!i10b 1
+Z9 !s108 1575444587.000000
+Z10 !s90 -reportprogress|300|-work|work|C:/Users/andre/OneDrive/Dokumente/GitHub/DigitalThereminVHDL/cic_filter/vhdl/cic.vhd|
+!s107 C:/Users/andre/OneDrive/Dokumente/GitHub/DigitalThereminVHDL/cic_filter/vhdl/cic.vhd|
+!i113 0
+Z11 o-work work
+Z12 tExplicit 1 CvgOpt 0
+Artl
+R2
+R3
+R4
+DEx4 work 3 cic 0 22 _?Ka<2hNZI[zf1gZJb29H3
+l36
+L23
+V^z0`o1b0DQ7]Ce3NSR?E43
+!s100 8H5IkoJfKUhk8^Fe;_f662
+R7
+33
+R8
+!i10b 1
+R9
+R10
+Z13 !s107 C:/Users/andre/OneDrive/Dokumente/GitHub/DigitalThereminVHDL/cic_filter/vhdl/cic.vhd|
+!i113 0
+R11
+R12
