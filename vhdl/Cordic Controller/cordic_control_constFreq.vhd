@@ -4,7 +4,7 @@
 -- File    : cordic.vhd
 -- Author  : dennis.aeschbacher@students.fhnw.ch
 -----------------------------------------------------
--- Description : Calculates the sine value of a given angle phi
+-- Description : Calculates the sine value of a given angle phi (constant Frequency)
 -----------------------------------------------------
 
 library ieee;
@@ -28,7 +28,7 @@ end entity cordic_Control;
 
 
 architecture behavioral of cordic_Control is
-constant sig_Freq : signed(20 downto 0) := to_signed(550000,21);      -- interpreted as 500000/2**20
+constant sig_Freq : signed(20 downto 0) := to_signed(500000,21);      -- interpreted as 500000/2**20
 constant clk_Period : signed(20 downto 0) := "000000101100101111010";		-- clk_Period multiplied with 2**20
 constant invert : signed(20 downto 0) := '0'&(19 downto 0 => '1');			-- used to invert sawtooth angle to triangle angle
 

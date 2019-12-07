@@ -23,6 +23,7 @@ architecture struct of cordic_control_tb is
 	signal reset_n     : std_ulogic;
 	signal phi 		 : signed (N-1 downto 0);
 	signal sine 	 : signed (N-1 downto 0);
+	signal sig_freq_up_down : std_ulogic_vector(1 downto 0);
 
 
 	
@@ -48,7 +49,8 @@ architecture struct of cordic_control_tb is
     	 
     	 reset_n : out std_ulogic;
     	 clk : out std_ulogic;
-    	 phi : out signed(N-1 downto 0)
+    	 phi : out signed(N-1 downto 0);
+    	 sig_freq_up_down : in std_ulogic_vector(1 downto 0)
   		);
 	end component cordic_Control;
 
@@ -59,7 +61,8 @@ architecture struct of cordic_control_tb is
   	port(
      reset_n : out std_ulogic;
    	 clk : out std_ulogic;
-     sine : in signed(N downto 0)
+     sine : in signed(N downto 0);
+     sig_freq_up_down : out std_ulogic_vector(1 downto 0)
   	);
 	end component cordic_control_verify;
 	
@@ -73,7 +76,8 @@ begin
 		port map (
 			clk       => clk,
 			reset_n     => reset_n,
-			phi     => phi
+			phi     => phi,
+			sig_freq_up_down => sig_freq_up_down
 		); 
 
 	cordic_pm : entity work.cordic_pipelined
@@ -95,7 +99,8 @@ begin
 		port map (
 			clk       => clk,
 			reset_n   => reset_n,
-			sine => sine
+			sine => sine,
+			sig_freq_up_down => sig_freq_up_down
 		); 
 	
 end architecture struct;
