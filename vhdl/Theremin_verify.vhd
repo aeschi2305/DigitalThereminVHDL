@@ -17,48 +17,119 @@ use std.textio.all;
 
 entity Theremin_verify is
   generic (
-    N : natural := 16  --Number of Bits of the sine wave (precision)
+    N : natural := 16;  --Number of Bits of the sine wave (precision)
+    freq_shift : boolean := false;
+    antenna_def_freq : natural := 501000
     );
     port (
       reset_n        : out  std_ulogic; -- asynchronous reset
       clk            : out  std_ulogic; -- clock
       square_freq    : out  std_ulogic; -- asynchronous reset, active low
-      audio_out      : in signed(N+9 downto 0)
+      audio_out      : in signed(N+9 downto 0);
+      sine           : in signed(N-1 downto 0);
+      mixer_out          : in signed(N-1 downto 0);
+      sig_freq_up_down : out std_ulogic_vector(1 downto 0)
     );
 end entity Theremin_verify;
 
 architecture stimuli_and_monitor of Theremin_verify is
-  constant c_cycle_time      : time := 20.83 ns; -- 48e6MHZ
-  constant c_cycle_time_rect : time := 1.901 us; --524.8kHz
+  constant c_cycle_time      : time := 20.833333333 ns; -- 48e6MHZ
+  constant c_cycle_time_rect : time := 1.996008 us; --501kHz
   constant data_size         : natural := 5000000;
-  signal count1              : natural := 0;
+  signal count              : natural := 0;
   signal enable              : boolean := true;
+  signal text_enable        : boolean := false;
  
 begin
-
-  p_count : process
+  
+    p_count : process
+    
   begin
-    while enable loop
-      if count1 < data_size-1 then
-        count1 <= count1 + 1;
-        enable <= true;
-      else
-        count1 <= 0;
-        enable <= false;
-      end if;
+    sig_freq_up_down <= "00";
+    while count <= data_size+2000 loop
       wait for c_cycle_time;
+      count <= count + 1;
+      if count = 1000 and freq_shift = true then 
+        f_up : for i in 0 to 999 loop
+            sig_freq_up_down <= "10";
+            wait for c_cycle_time;
+            sig_freq_up_down <= "00";
+            wait for c_cycle_time;
+        end loop f_up;
+      elsif count >= 2000 then
+        text_enable <= true;
+      end if;
     end loop;
+    wait for 3*c_cycle_time;
+    enable <= false;
     wait;
   end process p_count;
 
-
-  p_write : process
+  p_write_cordic_out : process
    -- Declare and Open file in read mode: 
-    file file_handler     : text open write_mode is "theremin_out.txt";
+    file file_handler     : text open write_mode is "Theremin_cordic.txt";
     Variable row          : line;
     Variable v_data_write : integer;
   begin
-    wait for 2*c_cycle_time;
+    wait until text_enable = true;
+    while enable loop
+    -- Write value to line
+      v_data_write := to_integer(sine);
+      write(row, v_data_write, right, 16);
+    -- Write line to the file
+      writeline(file_handler ,row);
+      wait for c_cycle_time;
+    end loop;
+    wait;
+  end process p_write_cordic_out;
+
+    p_write_square_out : process
+   -- Declare and Open file in read mode: 
+    file file_handler     : text open write_mode is "Theremin_square.txt";
+    Variable row          : line;
+    Variable v_data_write : integer;
+  begin
+    wait until text_enable = true;
+    while enable loop
+    -- Write value to line
+      if square_freq = '1' then
+        v_data_write := 1;
+      else
+        v_data_write := 0;
+      end if;
+      write(row, v_data_write, right, 1);
+    -- Write line to the file
+      writeline(file_handler ,row);
+      wait for c_cycle_time;
+    end loop;
+    wait;
+  end process p_write_square_out;
+
+    p_write_mixer_out : process
+   -- Declare and Open file in read mode: 
+    file file_handler     : text open write_mode is "Theremin_mixer.txt";
+    Variable row          : line;
+    Variable v_data_write : integer;
+  begin
+    wait until text_enable = true;
+    while enable loop
+    -- Write value to line
+      v_data_write := to_integer(mixer_out);
+      write(row, v_data_write, right, 16);
+    -- Write line to the file
+      writeline(file_handler ,row);
+      wait for c_cycle_time;
+    end loop;
+    wait;
+  end process p_write_mixer_out;
+
+  p_write_theremin_out : process
+   -- Declare and Open file in read mode: 
+    file file_handler     : text open write_mode is "Theremin_cic.txt";
+    Variable row          : line;
+    Variable v_data_write : integer;
+  begin
+    wait until text_enable = true;
     while enable loop
     -- Write value to line
       v_data_write := to_integer(audio_out);
@@ -68,7 +139,7 @@ begin
       wait for 1000*c_cycle_time;
     end loop;
     wait;
-  end process p_write;
+  end process p_write_theremin_out;
 
   -- 48MHz
   p_system_clk : process
@@ -83,7 +154,7 @@ begin
     wait;  -- don't do it again
   end process p_system_clk;
 
-    -- 525.8kHz
+    -- 500kHz
   p_clk_rect : process
   begin
     square_freq <= '0';

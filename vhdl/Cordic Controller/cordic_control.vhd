@@ -17,7 +17,8 @@ use ieee.math_real.all;
 
 entity cordic_Control is
     generic (
-     N : natural := 16  --Number of Bits of the sine wave (precision)
+     N : natural := 16;  --Number of Bits of the sine wave (precision)
+     cordic_def_freq : natural := 500000
     );
   port(
     reset_n : in std_ulogic;

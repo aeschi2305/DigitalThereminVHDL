@@ -16,7 +16,9 @@ end entity Theremin_tb;
 architecture struct of Theremin_tb is
 	
 	constant N       : natural := 16; 
-
+	constant freq_shift : boolean := false;
+	constant cordic_def_freq : natural := 500000;
+	constant antenna_def_freq : natural := 501000;
 	constant stages  : natural := 3;	-- N-1 / stages has to be a natural number
 	-- Internal signal declarations:
 	signal clk      	: std_ulogic;
@@ -26,6 +28,7 @@ architecture struct of Theremin_tb is
 	signal mixer_out 	: signed (N-1 downto 0);
 	signal square_freq  : std_ulogic;
 	signal audio_out 	: signed (N+9 downto 0);
+	signal sig_freq_up_down : std_ulogic_vector(1 downto 0);
 
 
 	
@@ -45,12 +48,14 @@ architecture struct of Theremin_tb is
 	
 	component cordic_Control is
 		generic (
-		  N : natural := 16	--Number of Bits of the sine wave (precision)
+		  N : natural := 16;	--Number of Bits of the sine wave (precision)
+		  cordic_def_freq : natural := 500000
 		);
   		port(
     	  reset_n : in std_ulogic;
     	  clk : in std_ulogic;
-    	  phi : out signed(N-1 downto 0)		--calculated angle for cordic processor
+    	  phi : out signed(N-1 downto 0);		--calculated angle for cordic processor
+    	  sig_freq_up_down : out std_ulogic_vector(1 downto 0)
   		);
 	end component cordic_Control;
 
@@ -81,13 +86,18 @@ architecture struct of Theremin_tb is
 
 	component Theremin_verify is
 		generic (
-		  N : natural := 16	--Number of Bits of the sine wave (precision)
+		  N : natural := 16;	--Number of Bits of the sine wave (precision)
+		  freq_shift : boolean := false;
+		  antenna_def_freq : natural := 501000
 		);
   		port(
     	  reset_n 		 : out std_ulogic;
    	 	  clk 			 : out std_ulogic;
      	  square_freq 	 : out std_ulogic;
-     	  audio_out      : in signed(N+9 downto 0)
+     	  audio_out      : in signed(N+9 downto 0);
+     	  sine           : in signed(N downto 0);
+      	  mixer_out      : in signed(N downto 0);
+      	  sig_freq_up_down : out std_ulogic_vector(1 downto 0)
   		);
 	end component Theremin_verify;
 	
@@ -96,12 +106,14 @@ begin
 	-- Instance port mappings.
 	control_pm : entity work.cordic_Control
 		generic map (
-			N => N
+			N => N,
+			cordic_def_freq => cordic_def_freq
 		)
 		port map (
 			clk       => clk,
 			reset_n     => reset_n,
-			phi     => phi
+			phi     => phi,
+			sig_freq_up_down => sig_freq_up_down
 		); 
 
 	cordic_pm : entity work.cordic_pipelined
@@ -141,13 +153,18 @@ begin
 
 	verify_pm : entity work.Theremin_verify
 		generic map (
-			N => N
+			N => N,
+			freq_shift => freq_shift,
+			antenna_def_freq => antenna_def_freq
 		)
 		port map (
 			clk       => clk,
 			reset_n   => reset_n,
 			square_freq => square_freq,
-			audio_out => audio_out
+			audio_out => audio_out,
+			mixer_out => mixer_out,
+			sine => sine,
+			sig_freq_up_down => sig_freq_up_down
 		); 
 	
 end architecture struct;
