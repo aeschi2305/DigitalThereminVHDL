@@ -16,7 +16,7 @@ entity cic is
   	 reset_n  	    : in  std_ulogic; -- asynchronous reset
      clk      	    : in  std_ulogic; -- clock
      mixer_out 	    : in signed(N-1 downto 0);
-     audio_out      : out signed(N+9 downto 0)
+     audio_out      : out signed(31 downto 0)
   );
 end entity cic;
 
@@ -91,6 +91,6 @@ begin
   ------------------------------------------------------------------------------
   -- Output Assignments
   ------------------------------------------------------------------------------
-  audio_out <= comb_reg;
+  audio_out <= comb_reg & "000000";
 
 end rtl;

@@ -10,8 +10,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library work;
-use work.de1_soc_pkg.all;
 
 entity Theremin_top is
   port( 
@@ -36,7 +34,7 @@ architecture struct of Theremin_top is
   signal sig_freq_up_down     : std_ulogic_vector(1 downto 0);
   signal key_pulse            : std_ulogic_vector(key'range);
   signal mixer_out            : signed(N-1 downto 0);
-  signal audio_out            : signed(N+9 downto 0);
+  signal audio_out            : signed(31 downto 0);
   
 begin
 -- Wrapping between de1_soc and Theremin
@@ -45,7 +43,7 @@ begin
   -- key:
   sig_freq_up_down <= key_pulse(3 downto 2);        -- up/down
   -- output:
-  audio_codec      <= audio_out
+  audio_codec      <= audio_out;
   
 -- synchronize the reset
   rsync_1 : entity work.rsync
@@ -83,10 +81,10 @@ begin
 
   -- user design: cordic_pipelinded
   cordic_pipelined_1 : entity work.cordic_pipelined
-    generic (
+    generic map (
       N => N,
       stages => stages
-    );
+    )
     port map (
       clk         => clk,
       reset_n     => reset_n,
@@ -96,10 +94,10 @@ begin
 
   -- user design: cordic_control
   cordic_Control_1 : entity work.cordic_Control
-    generic (
+    generic map (
       N => N,
       cordic_def_freq => cordic_def_freq
-    );
+    )
     port map (
       clk         => clk,
       reset_n     => reset_n,
@@ -109,9 +107,9 @@ begin
 
   -- user design: cic
   cic_1 : entity work.cic
-    generic (
+    generic map (
       N => N
-    );
+    )
     port map (
       clk         => clk,
       reset_n     => reset_n,
