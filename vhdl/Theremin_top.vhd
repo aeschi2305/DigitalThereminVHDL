@@ -114,7 +114,7 @@ begin
       clk         => clk,
       reset_n     => reset_n,
       mixer_out   => mixer_out,
-      audio_out   => audio_codec
+      audio_out   => audio_out
     ); 
   
 end architecture struct;

@@ -1,0 +1,16 @@
+Info: Starting: Create HDL design files for synthesis
+Info: qsys-generate D:\GitHub\Projekt5\DigitalThereminVHDL\synth\Audio.qsys --synthesis=VHDL --output-directory=D:\GitHub\Projekt5\DigitalThereminVHDL\vhdl\Audio\synthesis --family="Cyclone V" --part=5CSEMA5F31C6
+Progress: Loading synth/Audio.qsys
+Progress: Reading input file
+Progress: Adding audio_0 [altera_up_avalon_audio 17.1]
+Progress: Parameterizing module audio_0
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: Audio: Generating Audio "Audio" for QUARTUS_SYNTH
+Info: audio_0: Starting Generation of Audio Controller
+Info: audio_0: "Audio" instantiated altera_up_avalon_audio "audio_0"
+Info: Audio: Done "Audio" with 2 modules, 7 files
+Info: qsys-generate succeeded.
+Info: Finished: Create HDL design files for synthesis
