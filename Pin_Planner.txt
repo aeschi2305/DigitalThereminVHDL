@@ -1,0 +1,25 @@
+Input			PIN_H7
+Output			PIN_J7
+Input			PIN_H8
+Input			PIN_AF14
+Output			PIN_J12
+Bidir			PIN_K12
+Input			PIN_Y16
+Input			PIN_W15
+Input			PIN_AA15
+Input			PIN_AA14
+Input			PIN_AC18
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -18,7 +18,7 @@ entity cic is
      mixer_out 	    : in signed(N-1 downto 0);
      audio_out      : out std_logic_vector(31 downto 0);
      valid_L        : out std_logic;
-     ready_L        : in std_logic
+     ready_L        : in std_logic;
      valid_R        : out std_logic;
      ready_R        : in std_logic
   );
@@ -26,7 +26,6 @@ end entity cic;
 
 architecture rtl of cic is
   constant rc_factor : natural := 1000; --Rate Change Factor
-  constant offset : signed(N+9 downto 0) := to_signed(2**(N+9),N+10)
   -- Internal signals:
   signal integrator_reg       : signed(N+9 downto 0);
   signal integrator_cmb       : signed(N+9 downto 0);
