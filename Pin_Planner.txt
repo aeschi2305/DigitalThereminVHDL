@@ -1,14 +1,14 @@
-Input			PIN_H7
-Output			PIN_J7
-Input			PIN_H8
-Input			PIN_AF14
-Output			PIN_J12
-Bidir			PIN_K12
-Input			PIN_Y16
-Input			PIN_W15
-Input			PIN_AA15
-Input			PIN_AA14
-Input			PIN_AC18
+AUD_BCLK		Input			PIN_H7
+AUD_DACDAT		Output			PIN_J7
+AUD_DACLRCK		Input			PIN_H8
+clk_50			Input			PIN_AF14
+I2C_SCLK		Output			PIN_J12
+I2C_SDAT		Bidir			PIN_K12
+KEY[3]			Input			PIN_Y16
+KEY[2]			Input			PIN_W15
+KEY[1]			Input			PIN_AA15
+KEY[0]			Input			PIN_AA14
+square_freq		Input			PIN_AC18
 
 
 

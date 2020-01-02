@@ -20,7 +20,15 @@ entity Theremin_top is
     I2C_SCLK          : out   std_logic;
     AUD_BCLK          : in  std_logic;            
     AUD_DACDAT        : out std_logic;                                    
-    AUD_DACLRCK       : in  std_logic                                           
+    AUD_DACLRCK       : in  std_logic;
+    AUD_XCK           : out std_logic;
+    audio_outt         :out std_logic_vector(7 downto 0);
+    mixer_outt         : out std_logic;
+    sig_freq_out      : out std_ulogic;
+    clk_audio         : out std_logic;
+    audio_reset       : out std_logic;
+    valid_LL           : out std_logic;
+    ready_LL           : out std_logic
   );
 end entity Theremin_top;
 
@@ -28,10 +36,12 @@ architecture struct of Theremin_top is
   -- Architecture declarations
   constant N      : natural := 16;
   constant stages : natural := 3;
-  constant cordic_def_freq :natural := 500000;
+  constant cordic_def_freq :natural := 552000;
   -- Internal signal declarations:
   signal clk_48               : std_ulogic;
   signal reset_n              : std_ulogic;
+  signal resett               : std_ulogic;
+  signal reset_50MHz          : std_ulogic;
   signal square_freq_s        : std_ulogic;
   signal sine                 : signed(N-1 downto 0);
   signal phi                  : signed(N-1 downto 0);
@@ -53,8 +63,7 @@ component PLL_ip
   port (
     refclk   : in  std_logic; --  refclk.clk
     rst      : in  std_logic; --   reset.reset
-    outclk_0 : out std_logic;        -- outclk0.clk
-    locked   : out std_logic         --  locked.export
+    outclk_0 : out std_logic        -- outclk0.clk
   );
 end component PLL_ip;
 
@@ -101,10 +110,101 @@ component Audio_config is
   );
 end component Audio_config;
 
+component cordic_Control is
+    generic (
+     N : natural := 16;  --Number of Bits of the sine wave (precision)
+     cordic_def_freq : natural := 577000
+    );
+  port(
+    reset_n : in std_ulogic;
+    clk : in std_ulogic;
+    phi : out signed(N-1 downto 0);      --calculated angle for cordic processor
+    sig_freq_up_down : in std_ulogic_vector(1 downto 0)
+  );
+end component cordic_Control;
+
+component cic is
+  generic (
+   N : natural := 16  --Number of Bits of the sine wave (precision)
+  );
+    port (
+     reset_n        : in  std_ulogic; -- asynchronous reset
+     clk            : in  std_ulogic; -- clock
+     clk_12         : in std_logic;
+     reset_12     : in std_logic;
+     mixer_out      : in signed(N-1 downto 0);
+     audio_out      : out std_logic_vector(31 downto 0);
+     valid_L        : out std_logic;
+     ready_L        : in std_logic;
+     valid_R        : out std_logic;
+     ready_R        : in std_logic
+  );
+end component cic;
+
+component cordic_pipelined is
+  generic (
+    N : natural := 16; --Number of Bits of the sine wave (precision)
+    stages : natural := 3
+  );
+  port(
+    reset_n : in std_ulogic;
+    clk : in std_ulogic;
+    phi : in signed(N-1 downto 0);
+    sine : out signed(N-1 downto 0)
+  );
+end component cordic_pipelined;
+
+component mixer is
+  generic (
+   N : natural := 16  --Number of Bits of the sine wave (precision)
+  );
+    port (
+     reset_n      : in  std_ulogic; -- asynchronous reset
+     clk          : in  std_ulogic; -- clock
+     square_freq  : in  std_ulogic; -- asynchronous reset, active low
+     sine       : in signed(N-1 downto 0);
+     mixer_out    : out signed(N-1 downto 0)
+  );
+end component mixer;
+
+component isync is
+  generic (
+    g_width : natural := 2; -- width of input vector
+    g_inv   : natural := 0; -- invert the inputs
+    g_mode  : natural := 0  -- mode of outputs
+  );
+  port(
+    clk     : in  std_ulogic; -- clock
+    rst_n   : in  std_ulogic; -- asynchronous reset
+    idata_a : in  std_ulogic_vector(g_width-1 downto 0); -- asynchronous inputs
+    odata_s : out std_ulogic_vector(g_width-1 downto 0) -- single pulse
+  );
+end component isync;
+
+component rsync is
+  generic (
+    g_mode : natural := 0
+  );
+  port(
+    clk    : in  std_ulogic; -- clock
+    irst_n : in  std_ulogic; -- asynchronous reset, active low
+    orst_n : out std_ulogic; -- partially/full synchronized reset, active low
+    orst   : out std_ulogic  -- partially/full synchronized reset, active high
+  );
+end component rsync;
+
 begin
 -- Wrapping between de1_soc and Theremin
   -- key:
   sig_freq_up_down <= key_pulse(3 downto 2);        -- up/down
+  AUD_XCK <= audio_clk_clk;
+  audio_outt <= audio_out(31 downto 24);
+  mixer_outt <= AUD_DACDAT;
+  sig_freq_out <= clk_48;
+  clk_audio <= AUD_BCLK;
+  audio_reset <= AUD_DACLRCK;
+  valid_LL <= valid_L;
+  ready_LL <= ready_L;
 
 
 -- synchronize the reset
@@ -116,7 +216,18 @@ begin
       clk    => clk_48,
       irst_n => key(0),
       orst_n => reset_n,
-      orst   => open
+      orst   => resett
+    );
+
+    rsync_2 : entity work.rsync
+    generic map (
+      g_mode => 0
+    )
+    port map (
+      clk    => clk,
+      irst_n => key(0),
+      orst_n => open,
+      orst   => reset_50MHz
     );
   -- edge detection of the keys
   isync_2 : entity work.isync
@@ -136,15 +247,14 @@ begin
   pll_ip_1 : PLL_ip
     port map (
       refclk   => clk,   --  refclk.clk
-      rst      => reset_n,      --   reset.reset
-      outclk_0 => clk_48, -- outclk0.clk
-      locked   => open
+      rst      => reset_50MHz,      --   reset.reset
+      outclk_0 => clk_48 -- outclk0.clk
     ); 
 
   audio_clock_ip_1 : Audio_clock
     port map (
       ref_clk_clk        => clk,        --      ref_clk.clk
-      ref_reset_reset    => reset_n,    --    ref_reset.reset
+      ref_reset_reset    => reset_50MHz,    --    ref_reset.reset
       audio_clk_clk      => audio_clk_clk,      --    audio_clk.clk
       reset_source_reset => reset_audio  -- reset_source.reset
     );
@@ -229,6 +339,8 @@ begin
     port map (
       clk         => clk_48,
       reset_n     => reset_n,
+      clk_12      => audio_clk_clk,
+      reset_12  => reset_audio,
       mixer_out   => mixer_out,
       valid_R     => valid_R,
       valid_L     => valid_L,

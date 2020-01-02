@@ -23,9 +23,9 @@ entity Theremin_verify is
     );
     port (
       reset_n        : out  std_ulogic; -- asynchronous reset
-      reset_12		 : out std_logic;
       clk            : out  std_ulogic; -- clock
-      clk_12		 : out std_logic;
+      clk_12         : out std_logic;
+      reset_n_12     : out std_logic;
       square_freq    : out  std_ulogic; -- asynchronous reset, active low
       audio_out      : in std_logic_vector(31 downto 0);
       sine           : in signed(N-1 downto 0);
@@ -36,8 +36,8 @@ end entity Theremin_verify;
 
 architecture stimuli_and_monitor of Theremin_verify is
   constant c_cycle_time      : time := 20.833333333 ns; -- 48e6MHZ
+  constant c_cycle_time_codec: time := 81.38 ns;
   constant c_cycle_time_rect : time := 1.996008 us; --501kHz
-  constant c_cycle_time_codec : time := 81.3802083 ns;
   constant data_size         : natural := 5000000;
   signal count              : natural := 0;
   signal enable              : boolean := true;
@@ -135,7 +135,7 @@ begin
     wait until text_enable = true;
     while enable loop
     -- Write value to line
-      v_data_write := to_integer(signed(audio_out));
+      v_data_write := to_integer(unsigned(audio_out));
       write(row, v_data_write, right, 26);
     -- Write line to the file
       writeline(file_handler ,row);
@@ -157,10 +157,9 @@ begin
     wait;  -- don't do it again
   end process p_system_clk;
 
-    -- 12MHz
-  p_system_clk_12 : process
-  begin
-    reset_12 <= transport '1', '0' after 2*c_cycle_time_codec;
+    --12.288 MHz
+  p_system_clk_12 : process  begin
+    reset_n_12 <= transport '0', '1' after 2*c_cycle_time_codec;
     while enable loop
       clk_12 <= '0';
       wait for c_cycle_time_codec/2;

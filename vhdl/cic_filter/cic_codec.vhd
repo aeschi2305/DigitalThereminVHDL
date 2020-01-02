@@ -15,6 +15,8 @@ entity cic is
   	port (
   	 reset_n  	    : in  std_ulogic; -- asynchronous reset
      clk      	    : in  std_ulogic; -- clock
+     clk_12         : in std_logic;
+     reset_12     : in std_logic;
      mixer_out 	    : in signed(N-1 downto 0);
      audio_out      : out std_logic_vector(31 downto 0);
      valid_L        : out std_logic;
@@ -38,7 +40,12 @@ architecture rtl of cic is
   signal count_cmb            : integer range 0 to 1001;
   signal audio_cmb            : std_logic_vector(31 downto 0);
   signal audio_reg            : std_logic_vector(31 downto 0);
-
+  signal valid_L_int          : std_ulogic;
+  signal valid_R_int          : std_ulogic;
+  signal valid_L_sync         : std_ulogic_vector(1 downto 0);
+  signal valid_R_sync         : std_ulogic_vector(1 downto 0);
+  signal valid_L_sync_int     : std_ulogic_vector(1 downto 0);
+  signal valid_R_sync_int     : std_ulogic_vector(1 downto 0);
 begin
   ------------------------------------------------------------------------------
   -- Integrator Registerd Process 
@@ -51,6 +58,25 @@ begin
         integrator_reg <= integrator_cmb; 
     end if;
   end process p_integrator_reg;
+
+  p_clk_change : process (reset_12,clk_12)
+  begin
+    valid_L_sync <= valid_L_sync(0) & valid_L_int;
+    valid_R_sync <= valid_R_sync(0) & valid_R_int;
+    if reset_12 = '1' then
+      valid_L <= '0';
+      valid_R <= '0';
+    elsif rising_edge(clk_12) then
+      valid_L <= '0';
+      if valid_L_sync(1) = '1' then
+        valid_L <= '1';
+      end if;
+      valid_R <= '0';
+      if valid_R_sync(1) = '1' then
+        valid_R <= '1';
+      end if;
+    end if;
+  end process p_clk_change;
   ------------------------------------------------------------------------------
   -- Integrator Combinatorial Process
   -----------------------------------------------------------------------------
@@ -76,6 +102,7 @@ begin
           en_comb <= false;
         else
           en_comb <= true;
+          audio_reg <= audio_cmb;
           count_reg <= 0;
         end if;
         if en_comb = true then   --comb
@@ -83,17 +110,21 @@ begin
           comb_in_reg <= integrator_reg;
           comb_old_reg <= comb_in_reg;
         end if;
+        valid_L_sync_int <= valid_L_sync_int(0) & valid_L;
+        valid_R_sync_int <= valid_R_sync_int(0) & valid_R;
         if ready_L = '1' and en_comb = true then
-          valid_L <= '1';
-        elsif ready_L = '0' then
-          valid_L <= '0';
+          valid_L_int <= '1';
         end if;
         if ready_R = '1' and en_comb = true then
-          valid_R <= '1';
-        elsif ready_R = '0' then
-          valid_R <= '0';
+          valid_R_int <= '1';
         end if;
-        audio_reg <= audio_cmb;
+
+        if valid_L_sync_int(1) = '1' then
+          valid_L_int <= '0';
+        end if;
+        if valid_R_sync_int(1) = '1' then
+          valid_R_int <= '0';
+        end if;
     end if;
   end process p_comb_reg;
   ------------------------------------------------------------------------------

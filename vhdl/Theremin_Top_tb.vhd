@@ -27,7 +27,7 @@ architecture struct of Theremin_tb is
 	signal sine 		: signed (N-1 downto 0);
 	signal mixer_out 	: signed (N-1 downto 0);
 	signal square_freq  : std_ulogic;
-	signal audio_out 	: signed (31 downto 0);
+	signal audio_out 	: signed (N+9 downto 0);
 	signal sig_freq_up_down : std_ulogic_vector(1 downto 0);
 
 

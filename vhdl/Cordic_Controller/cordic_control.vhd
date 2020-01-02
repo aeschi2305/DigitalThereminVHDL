@@ -18,7 +18,7 @@ use ieee.math_real.all;
 entity cordic_Control is
     generic (
      N : natural := 16;  --Number of Bits of the sine wave (precision)
-     cordic_def_freq : natural := 500000
+     cordic_def_freq : natural := 577000
     );
   port(
     reset_n : in std_ulogic;
@@ -52,7 +52,7 @@ begin
       if reset_n = '0' then
             phi_reg <= (others => '0');
             phi_noninv_reg <= (others => '0');
-            sig_Freq <= to_signed(500000,21);
+            sig_Freq <= to_signed(cordic_def_freq,21);
         elsif rising_edge(clk) then
             phi_reg <= phi_cmb;
             phi_noninv_reg <= phi_noninv_cmb;

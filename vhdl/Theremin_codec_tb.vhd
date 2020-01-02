@@ -23,11 +23,13 @@ architecture struct of Theremin_tb is
 	-- Internal signal declarations:
 	signal clk      	: std_ulogic;
 	signal reset_n   	: std_ulogic;
+	signal clk12 		: std_logic;
+	signal reset_n12 	: std_logic;
 	signal phi 			: signed (N-1 downto 0);
 	signal sine 		: signed (N-1 downto 0);
 	signal mixer_out 	: signed (N-1 downto 0);
 	signal square_freq  : std_ulogic;
-	signal audio_out 	: signed (31 downto 0);
+	signal audio_out 	: std_logic_vector(31 downto 0);
 	signal sig_freq_up_down : std_ulogic_vector(1 downto 0);
 
 
@@ -77,10 +79,16 @@ architecture struct of Theremin_tb is
 		  N : natural := 16	--Number of Bits of the sine wave (precision)
 		);
 	  	port (
-	  	  reset_n  	    : in  std_ulogic; -- asynchronous reset
-	      clk      	    : in  std_ulogic; -- clock
-	      mixer_out 	: in signed(N-1 downto 0);
-	      audio_out     : out signed(N+9 downto 0)
+		 reset_n  	    : in  std_ulogic; -- asynchronous reset
+	     clk      	    : in  std_ulogic; -- clock
+	     clk_12         : in std_logic;
+	     reset_n_12     : in std_logic;
+	     mixer_out 	    : in signed(N-1 downto 0);
+	     audio_out      : out std_logic_vector(31 downto 0);
+	     valid_L        : out std_logic;
+	     ready_L        : in std_logic;
+	     valid_R        : out std_logic;
+	     ready_R        : in std_logic
 	  );
 	end component cic;
 
@@ -91,14 +99,16 @@ architecture struct of Theremin_tb is
 		  antenna_def_freq : natural := 501000
 		);
   		port(
-    	  reset_n 		 : out std_ulogic;
-   	 	  clk 			 : out std_ulogic;
-     	  square_freq 	 : out std_ulogic;
-     	  audio_out      : in signed(N+9 downto 0);
-     	  sine           : in signed(N downto 0);
-      	  mixer_out      : in signed(N downto 0);
-      	  sig_freq_up_down : out std_ulogic_vector(1 downto 0)
-  		);
+	      reset_n        : out  std_ulogic; -- asynchronous reset
+	      reset_12       : out std_logic;
+	      clk            : out  std_ulogic; -- clock
+	      clk_12         : out std_logic;
+	      square_freq    : out  std_ulogic; -- asynchronous reset, active low
+	      audio_out      : in std_logic_vector(31 downto 0);
+	      sine           : in signed(N-1 downto 0);
+	      mixer_out          : in signed(N-1 downto 0);
+	      sig_freq_up_down : out std_ulogic_vector(1 downto 0)
+	  	);
 	end component Theremin_verify;
 	
 begin
@@ -135,8 +145,14 @@ begin
 		port map (
 			clk       => clk,
 			reset_n     => reset_n,
+			clk_12 => clk12,
+			reset_12 => reset_n12,
 			audio_out => audio_out,
-			mixer_out => mixer_out
+			mixer_out => mixer_out,
+			valid_L  => open,
+     	    ready_L  => '1',
+     	    valid_R  => open,
+     	    ready_R => '1'
 		); 
 
 	mixer_pm : entity work.mixer
@@ -164,7 +180,8 @@ begin
 			audio_out => audio_out,
 			mixer_out => mixer_out,
 			sine => sine,
-			sig_freq_up_down => sig_freq_up_down
+			sig_freq_up_down => sig_freq_up_down,
+			clk_12 => clk12
 		); 
 	
 end architecture struct;
