@@ -21,14 +21,7 @@ entity Theremin_top is
     AUD_BCLK          : in  std_logic;            
     AUD_DACDAT        : out std_logic;                                    
     AUD_DACLRCK       : in  std_logic;
-    AUD_XCK           : out std_logic;
-    audio_outt         :out std_logic_vector(7 downto 0);
-    mixer_outt         : out std_logic;
-    sig_freq_out      : out std_ulogic;
-    clk_audio         : out std_logic;
-    audio_reset       : out std_logic;
-    valid_LL           : out std_logic;
-    ready_LL           : out std_logic
+    AUD_XCK           : out std_logic
   );
 end entity Theremin_top;
 
@@ -194,18 +187,9 @@ component rsync is
 end component rsync;
 
 begin
--- Wrapping between de1_soc and Theremin
-  -- key:
+
   sig_freq_up_down <= key_pulse(3 downto 2);        -- up/down
   AUD_XCK <= audio_clk_clk;
-  audio_outt <= audio_out(31 downto 24);
-  mixer_outt <= AUD_DACDAT;
-  sig_freq_out <= clk_48;
-  clk_audio <= AUD_BCLK;
-  audio_reset <= AUD_DACLRCK;
-  valid_LL <= valid_L;
-  ready_LL <= ready_L;
-
 
 -- synchronize the reset
   rsync_1 : entity work.rsync
