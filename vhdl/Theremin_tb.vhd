@@ -1,10 +1,10 @@
 -----------------------------------------------------
 -- Project : Digital Theremin
 -----------------------------------------------------
--- File    : cordic_pipelined_tb.vhd
+-- File    : Theremin_tb.vhd
 -- Author  : dennis.aeschbacher@students.fhnw.ch
 -----------------------------------------------------
--- Description : Testbench for cordic_pipelined.vhd
+-- Description : Testbench for complete setup excluding codec
 -----------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;

@@ -1,10 +1,10 @@
 -----------------------------------------------------
 -- Project : Digital Theremin
 -----------------------------------------------------
--- File    : theremin_verify.vhd
+-- File    : Theremin_codec_verify.vhd
 -- Author  : andreas.frei@students.fhnw.ch
 -----------------------------------------------------
--- Description : Stimulus and Monitor 
+-- Description : Stimulus and Monitor including codec
 -----------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
@@ -135,7 +135,7 @@ begin
     wait until text_enable = true;
     while enable loop
     -- Write value to line
-      v_data_write := to_integer(unsigned(audio_out));
+      v_data_write := to_integer(unsigned(audio_out(31 downto 6)));
       write(row, v_data_write, right, 26);
     -- Write line to the file
       writeline(file_handler ,row);

@@ -1,0 +1,49 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "I2C_SCLK",
+					"strict" : false
+				},
+				{
+					"name" : "AUD_DACDAT",
+					"strict" : false
+				},
+				{
+					"name" : "I2C_SDAT",
+					"strict" : false
+				},
+				{
+					"name" : "clk",
+					"strict" : false
+				},
+				{
+					"name" : "key[0]",
+					"strict" : false
+				},
+				{
+					"name" : "AUD_DACLRCK",
+					"strict" : false
+				},
+				{
+					"name" : "AUD_BCLK",
+					"strict" : false
+				},
+				{
+					"name" : "square_freq",
+					"strict" : false
+				},
+				{
+					"name" : "key[3]",
+					"strict" : false
+				},
+				{
+					"name" : "key[2]",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

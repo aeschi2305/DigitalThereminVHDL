@@ -1,0 +1,10 @@
+## -----------------------------------------------------------------------------
+## Filename: Test_codec.qip
+## Author  : Dennis Aeschbacher
+## Date    : 15.12.2019
+## Content : Toplevel IP-File
+## -----------------------------------------------------------------------------
+
+# Timing Constraints
+# -----------------------------------------------------------------------------
+set_global_assignment -name SDC_FILE  Test_codec.sdc

@@ -1,0 +1,17 @@
+Analysis & Synthesis Status : Successful - Thu Jan 02 14:24:44 2020
+Quartus Prime Version : 17.1.0 Build 590 10/25/2017 SJ Standard Edition
+Revision Name : digital_theremin
+Top-level Entity Name : Theremin_top
+Family : Cyclone V
+Logic utilization (in ALMs) : N/A
+Total registers : 615
+Total pins : 12
+Total virtual pins : 0
+Total block memory bits : 8,192
+Total DSP Blocks : 2
+Total HSSI RX PCSs : 0
+Total HSSI PMA RX Deserializers : 0
+Total HSSI TX PCSs : 0
+Total HSSI PMA TX Serializers : 0
+Total PLLs : 2
+Total DLLs : 0

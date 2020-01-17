@@ -1,0 +1,20 @@
+Fitter Status : Successful - Thu Jan 02 14:25:41 2020
+Quartus Prime Version : 17.1.0 Build 590 10/25/2017 SJ Standard Edition
+Revision Name : digital_theremin
+Top-level Entity Name : Theremin_top
+Family : Cyclone V
+Device : 5CSEMA5F31C6
+Timing Models : Final
+Logic utilization (in ALMs) : 593 / 32,070 ( 2 % )
+Total registers : 629
+Total pins : 12 / 457 ( 3 % )
+Total virtual pins : 0
+Total block memory bits : 8,192 / 4,065,280 ( < 1 % )
+Total RAM Blocks : 2 / 397 ( < 1 % )
+Total DSP Blocks : 2 / 87 ( 2 % )
+Total HSSI RX PCSs : 0
+Total HSSI PMA RX Deserializers : 0
+Total HSSI TX PCSs : 0
+Total HSSI PMA TX Serializers : 0
+Total PLLs : 2 / 6 ( 33 % )
+Total DLLs : 0 / 4 ( 0 % )

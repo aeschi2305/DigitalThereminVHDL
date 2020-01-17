@@ -1,0 +1,137 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 2017  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details.
+*/
+(header "symbol" (version "1.1"))
+(symbol
+	(rect 0 0 384 336)
+	(text "Audio_config" (rect 154 -1 207 11)(font "Arial" (font_size 10)))
+	(text "inst" (rect 8 320 20 332)(font "Arial" ))
+	(port
+		(pt 0 72)
+		(input)
+		(text "clk" (rect 0 0 10 12)(font "Arial" (font_size 8)))
+		(text "clk" (rect 4 61 22 72)(font "Arial" (font_size 8)))
+		(line (pt 0 72)(pt 160 72)(line_width 1))
+	)
+	(port
+		(pt 0 112)
+		(input)
+		(text "reset" (rect 0 0 20 12)(font "Arial" (font_size 8)))
+		(text "reset" (rect 4 101 34 112)(font "Arial" (font_size 8)))
+		(line (pt 0 112)(pt 160 112)(line_width 1))
+	)
+	(port
+		(pt 0 152)
+		(input)
+		(text "address[1..0]" (rect 0 0 50 12)(font "Arial" (font_size 8)))
+		(text "address[1..0]" (rect 4 141 82 152)(font "Arial" (font_size 8)))
+		(line (pt 0 152)(pt 160 152)(line_width 3))
+	)
+	(port
+		(pt 0 168)
+		(input)
+		(text "byteenable[3..0]" (rect 0 0 62 12)(font "Arial" (font_size 8)))
+		(text "byteenable[3..0]" (rect 4 157 100 168)(font "Arial" (font_size 8)))
+		(line (pt 0 168)(pt 160 168)(line_width 3))
+	)
+	(port
+		(pt 0 184)
+		(input)
+		(text "read" (rect 0 0 17 12)(font "Arial" (font_size 8)))
+		(text "read" (rect 4 173 28 184)(font "Arial" (font_size 8)))
+		(line (pt 0 184)(pt 160 184)(line_width 1))
+	)
+	(port
+		(pt 0 200)
+		(input)
+		(text "write" (rect 0 0 17 12)(font "Arial" (font_size 8)))
+		(text "write" (rect 4 189 34 200)(font "Arial" (font_size 8)))
+		(line (pt 0 200)(pt 160 200)(line_width 1))
+	)
+	(port
+		(pt 0 216)
+		(input)
+		(text "writedata[31..0]" (rect 0 0 57 12)(font "Arial" (font_size 8)))
+		(text "writedata[31..0]" (rect 4 205 100 216)(font "Arial" (font_size 8)))
+		(line (pt 0 216)(pt 160 216)(line_width 3))
+	)
+	(port
+		(pt 0 232)
+		(output)
+		(text "readdata[31..0]" (rect 0 0 57 12)(font "Arial" (font_size 8)))
+		(text "readdata[31..0]" (rect 4 221 94 232)(font "Arial" (font_size 8)))
+		(line (pt 0 232)(pt 160 232)(line_width 3))
+	)
+	(port
+		(pt 0 248)
+		(output)
+		(text "waitrequest" (rect 0 0 43 12)(font "Arial" (font_size 8)))
+		(text "waitrequest" (rect 4 237 70 248)(font "Arial" (font_size 8)))
+		(line (pt 0 248)(pt 160 248)(line_width 1))
+	)
+	(port
+		(pt 0 304)
+		(output)
+		(text "I2C_SCLK" (rect 0 0 46 12)(font "Arial" (font_size 8)))
+		(text "I2C_SCLK" (rect 4 293 52 304)(font "Arial" (font_size 8)))
+		(line (pt 0 304)(pt 160 304)(line_width 1))
+	)
+	(port
+		(pt 0 288)
+		(bidir)
+		(text "I2C_SDAT" (rect 0 0 47 12)(font "Arial" (font_size 8)))
+		(text "I2C_SDAT" (rect 4 277 52 288)(font "Arial" (font_size 8)))
+		(line (pt 0 288)(pt 160 288)(line_width 1))
+	)
+	(drawing
+		(text "clk" (rect 145 43 308 99)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "clk" (rect 165 67 348 144)(font "Arial" (color 0 0 0)))
+		(text "reset" (rect 131 83 292 179)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "reset" (rect 165 107 360 224)(font "Arial" (color 0 0 0)))
+		(text "avalon_av_config_slave" (rect 22 123 176 259)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "address" (rect 165 147 372 304)(font "Arial" (color 0 0 0)))
+		(text "byteenable" (rect 165 163 390 336)(font "Arial" (color 0 0 0)))
+		(text "read" (rect 165 179 354 368)(font "Arial" (color 0 0 0)))
+		(text "write" (rect 165 195 360 400)(font "Arial" (color 0 0 0)))
+		(text "writedata" (rect 165 211 384 432)(font "Arial" (color 0 0 0)))
+		(text "readdata" (rect 165 227 378 464)(font "Arial" (color 0 0 0)))
+		(text "waitrequest" (rect 165 243 396 496)(font "Arial" (color 0 0 0)))
+		(text "external_interface" (rect 56 259 220 531)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "SDAT" (rect 165 283 354 576)(font "Arial" (color 0 0 0)))
+		(text "SCLK" (rect 165 299 354 608)(font "Arial" (color 0 0 0)))
+		(text " system " (rect 349 320 746 650)(font "Arial" ))
+		(line (pt 160 32)(pt 224 32)(line_width 1))
+		(line (pt 224 32)(pt 224 320)(line_width 1))
+		(line (pt 160 320)(pt 224 320)(line_width 1))
+		(line (pt 160 32)(pt 160 320)(line_width 1))
+		(line (pt 161 52)(pt 161 76)(line_width 1))
+		(line (pt 162 52)(pt 162 76)(line_width 1))
+		(line (pt 161 92)(pt 161 116)(line_width 1))
+		(line (pt 162 92)(pt 162 116)(line_width 1))
+		(line (pt 161 132)(pt 161 252)(line_width 1))
+		(line (pt 162 132)(pt 162 252)(line_width 1))
+		(line (pt 161 268)(pt 161 308)(line_width 1))
+		(line (pt 162 268)(pt 162 308)(line_width 1))
+		(line (pt 0 0)(pt 384 0)(line_width 1))
+		(line (pt 384 0)(pt 384 336)(line_width 1))
+		(line (pt 0 336)(pt 384 336)(line_width 1))
+		(line (pt 0 0)(pt 0 336)(line_width 1))
+	)
+)

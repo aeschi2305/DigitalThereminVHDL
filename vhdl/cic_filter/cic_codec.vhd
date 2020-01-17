@@ -1,9 +1,11 @@
---=========================================================
---Filename:  cic.vhd
---Designer:  Andreas Frei
---Date    :  27.11.2019
---Content :  CIC decimators Filter
---=========================================================
+-----------------------------------------------------
+-- Project : Digital Theremin
+-----------------------------------------------------
+-- File    : cic_codec.vhd
+-- Author  : andreas.frei@students.fhnw.ch
+-----------------------------------------------------
+-- Description : Decimation CIC-Filter
+-----------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;
@@ -17,12 +19,12 @@ entity cic is
      clk      	    : in  std_ulogic; -- clock
      clk_12         : in std_logic;
      reset_12     : in std_logic;
-     mixer_out 	    : in signed(N-1 downto 0);
-     audio_out      : out std_logic_vector(31 downto 0);
-     valid_L        : out std_logic;
-     ready_L        : in std_logic;
-     valid_R        : out std_logic;
-     ready_R        : in std_logic
+     mixer_out 	    : in signed(N-1 downto 0);				--Input signal
+     audio_out      : out std_logic_vector(31 downto 0);	--Output signal
+     valid_L        : out std_logic;	--Control Signals
+     ready_L        : in std_logic;		--""
+     valid_R        : out std_logic;	--""
+     ready_R        : in std_logic 		--""
   );
 end entity cic;
 
@@ -59,6 +61,9 @@ begin
     end if;
   end process p_integrator_reg;
 
+  ------------------------------------------------------------------------------
+  -- Clock domain change for control signals
+  ------------------------------------------------------------------------------
   p_clk_change : process (reset_12,clk_12)
   begin
     valid_L_sync <= valid_L_sync(0) & valid_L_int;
@@ -79,6 +84,7 @@ begin
   end process p_clk_change;
   ------------------------------------------------------------------------------
   -- Integrator Combinatorial Process
+  -- adds up the input over time
   -----------------------------------------------------------------------------
   p_integrator_cmb : process (all)
   begin
@@ -87,6 +93,7 @@ begin
 
   ------------------------------------------------------------------------------
   -- Comb Registerd Process 
+  -- Also handles the communication with the Audio Core
   ------------------------------------------------------------------------------
   p_comb_reg : process (reset_n, clk)
   begin
@@ -97,15 +104,15 @@ begin
       count_reg <= 0;
       en_comb <= false;
     elsif rising_edge(clk) then
-        if count_reg < rc_factor then --1- rausgenommen
-          count_reg <= count_cmb; --counter
+        if count_reg < rc_factor then 
+          count_reg <= count_cmb; 
           en_comb <= false;
         else
           en_comb <= true;
           audio_reg <= audio_cmb;
           count_reg <= 0;
         end if;
-        if en_comb = true then   --comb
+        if en_comb = true then  
           comb_reg <= comb_cmb;
           comb_in_reg <= integrator_reg;
           comb_old_reg <= comb_in_reg;
@@ -129,6 +136,7 @@ begin
   end process p_comb_reg;
   ------------------------------------------------------------------------------
   -- Comb Combinatorial Process
+  -- subtracts the old input value from the new
   ------------------------------------------------------------------------------
   p_comb_cmb : process (all)
   variable audio_tmp : std_logic_vector(31 downto 0);

@@ -1,9 +1,11 @@
---=========================================================
---Filename:  mixer.vhd
---Designer:  Andreas Frei
---Date    :  25.11.2019
---Content :  mixer
---=========================================================
+-----------------------------------------------------
+-- Project : Digital Theremin
+-----------------------------------------------------
+-- File    : mixer.vhd
+-- Author  : andreas.frei@students.fhnw.ch
+-----------------------------------------------------
+-- Description : mixes the reference oscillator with the antenna oscillator
+-----------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.numeric_std.all;

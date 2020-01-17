@@ -1,10 +1,10 @@
 -----------------------------------------------------
 -- Project : Digital Theremin
 -----------------------------------------------------
--- File    : cordic_pipelined_tb.vhd
+-- File    : Theremin_codec_tb.vhd
 -- Author  : dennis.aeschbacher@students.fhnw.ch
 -----------------------------------------------------
--- Description : Testbench for cordic_pipelined.vhd
+-- Description : Testbench for complete setup including codec
 -----------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
@@ -51,7 +51,7 @@ architecture struct of Theremin_tb is
 	component cordic_Control is
 		generic (
 		  N : natural := 16;	--Number of Bits of the sine wave (precision)
-		  cordic_def_freq : natural := 500000
+		  cordic_def_freq : natural := 501000
 		);
   		port(
     	  reset_n : in std_ulogic;

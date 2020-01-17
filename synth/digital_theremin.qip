@@ -1,0 +1,23 @@
+## -----------------------------------------------------------------------------
+## Filename: digital_theremin.qip
+## Author  : Dennis Aeschbacher
+## Date    : 15.12.2019
+## Content : Toplevel IP-File
+## -----------------------------------------------------------------------------
+
+# from HDL Designer
+# -----------------------------------------------------------------------------
+## - project_lib 
+set_global_assignment -name SEARCH_PATH ../vhdl
+set_global_assignment -name VHDL_FILE Cordic_Processor/cordic_pipelined.vhd
+set_global_assignment -name VHDL_FILE Cordic_Controller/cordic_control.vhd
+set_global_assignment -name VHDL_FILE cic_filter/cic_codec.vhd
+set_global_assignment -name VHDL_FILE mixer/mixer.vhd
+set_global_assignment -name VHDL_FILE ip_pichler/isync.vhd
+set_global_assignment -name VHDL_FILE ip_pichler/rsync.vhd
+
+set_global_assignment -name VHDL_FILE Theremin_top.vhd
+
+# Timing Constraints
+# -----------------------------------------------------------------------------
+set_global_assignment -name SDC_FILE  digital_theremin.sdc

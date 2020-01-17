@@ -4,7 +4,7 @@
 -- File    : cordic.vhd
 -- Author  : dennis.aeschbacher@students.fhnw.ch
 -----------------------------------------------------
--- Description : Calculates the sine value of a given angle phi (constant Frequency)
+-- Description : Calculates the angle for use in the cordic algorithm
 -----------------------------------------------------
 
 library ieee;
@@ -34,7 +34,7 @@ architecture behavioral of cordic_Control is
 constant clk_Period : signed(20 downto 0) := "000010110010111101010";       -- clk_Period multiplied with 2**20
 constant invert : signed(20 downto 0) := '0'&(19 downto 0 => '1');          -- used to invert sawtooth angle to triangle angle
 
-signal sig_Freq : signed(20 downto 0);      -- interpreted as 500000/2**20
+signal sig_Freq : signed(20 downto 0);      -- interpreted as cordic_def_freq/2**20
 signal phi_noninv_cmb : signed (20 downto 0);    --Combinatorial calculated sawtooth angle
 signal phi_noninv_reg : signed (20 downto 0);    --Sequential calculated sawtooth angle
 signal phi_cmb : signed (N-1 downto 0);         --Combinatorial calculated triangle angle
@@ -46,7 +46,8 @@ signal freq_up_down_3 : std_ulogic_vector(1 downto 0);
 signal sig_Freq_cmb : signed(20 downto 0);
 
 begin
-
+    
+    --Registered Process--
     p_reg : process(reset_n,clk)
     begin
       if reset_n = '0' then
@@ -63,6 +64,7 @@ begin
         end if;
     end process p_reg;
 
+    --Combinatorial Process to calculate current sawtooth and triangle angle
     p_cmb_phicalc : process(all)
     variable phi_tmp1 : signed(20 downto 0) := (others => '0');
     variable phi_tmp2 : signed(20 downto 0) := (others => '0');
@@ -78,6 +80,7 @@ begin
         phi_noninv_cmb <= phi_tmp1;
     end process p_cmb_phicalc;
 
+    --Combinatorial process to calibrate Sine frequency
     p_cmb_sig_freq : process(all)
     begin
         sig_Freq_cmb <= sig_Freq;
@@ -88,6 +91,7 @@ begin
         end if;
     end process p_cmb_sig_freq;
 
+    --Combinatorial Process to calculate current angle step size
     p_cmb_stepcalc : process(all)
         variable phi_step_tmp : signed(41 downto 0);
         variable phi_step_tmp2 : signed(20 downto 0);
